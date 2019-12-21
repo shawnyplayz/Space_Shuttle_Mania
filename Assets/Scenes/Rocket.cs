@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
+    [SerializeField]float rcs = 1000f;
+    [SerializeField] float MainThrust = 1000f;
     Rigidbody rigidBody;
     AudioSource audioSource;
 
@@ -18,14 +20,31 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        Thrusting();
+        Rotate();
     }
-
-     void ProcessInput()
+    void OnCollisionEnter(Collision collision)
     {
+        switch(collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("OK");
+                break;
+            case "Enemy":
+                print("DEAD");
+                break;
+
+            case "Fuel":
+                print("FUEL");
+                break;
+        }
+    }
+        void Thrusting()
+    {
+        float thrustingframe = MainThrust * Time.deltaTime;
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(Vector3.up * thrustingframe);
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
@@ -33,18 +52,28 @@ public class Rocket : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+
+            rigidBody.AddRelativeForce(Vector3.up * thrustingframe);
             audioSource.Stop();
         }
+    }
+    void Rotate()
+    {
+        float rotationframe;
+        rotationframe = rcs * Time.deltaTime;
+        rigidBody.freezeRotation = true;
+        
         if (Input.GetKey(KeyCode.A))
-         {
-            transform.Rotate(Vector3.forward);
-            
+        {
+            transform.Rotate(Vector3.forward * rotationframe);
+
         }
         else if (Input.GetKey(KeyCode.D))
-            {
-            transform.Rotate(-Vector3.forward);
+        {
+            transform.Rotate(-Vector3.forward * rotationframe);
         }
-        
+        rigidBody.freezeRotation = false;
     }
+
+    
 }
