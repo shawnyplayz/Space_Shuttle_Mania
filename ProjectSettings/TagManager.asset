@@ -6,7 +6,9 @@ TagManager:
   tags:
   - Friendly
   - Enemy
-  - Fuel
+  - Start
+  - Finsih
+  - Obstacles
   layers:
   - Default
   - TransparentFX
