@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class Rocket : MonoBehaviour
     [SerializeField] float MainThrust = 1000f;
     Rigidbody rigidBody;
     AudioSource audioSource;
+    enum State {alive, dying, transcending}
+    State state = State.alive;
 
     // Start is called before the first frame update
     void Start()
@@ -20,26 +23,55 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Thrusting();
-        Rotate();
+        if (state == State.alive)
+        {
+            Thrusting();
+            Rotate();
+        }
     }
     void OnCollisionEnter(Collision collision)
     {
-        switch(collision.gameObject.tag)
+        if (state != State.alive)
         {
+            return;
+        }
+        switch (collision.gameObject.tag)
+        {
+            
+            
             case "Friendly":
-                print("OK");
+                //nothing to do
                 break;
-            case "Enemy":
-                print("DEAD");
+            case "Obstacles":
+                print("Deadly");
+                state = State.dying;
+                Invoke("LoadSameScene", 1f);
+                
+                //Loads the scene again
                 break;
 
-            case "Fuel":
-                print("FUEL");
+            case "Fin":
+                state = State.transcending;
+                Invoke("LoadNextScene" , 1f);
+                //Loads the next scene
                 break;
         }
     }
-        void Thrusting()
+
+     void LoadSameScene()
+    {
+        
+        
+        SceneManager.LoadScene(0);
+
+    }
+
+    void LoadNextScene()// allow for more than two levels
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    void Thrusting()
     {
         float thrustingframe = MainThrust * Time.deltaTime;
         if (Input.GetKey(KeyCode.Space))

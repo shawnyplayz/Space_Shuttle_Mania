@@ -7,8 +7,8 @@ TagManager:
   - Friendly
   - Enemy
   - Start
-  - Finsih
   - Obstacles
+  - Fin
   layers:
   - Default
   - TransparentFX
